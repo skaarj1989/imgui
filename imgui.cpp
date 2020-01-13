@@ -4053,7 +4053,6 @@ void ImGui::Shutdown(ImGuiContext* context)
     g.ClipboardHandlerData.clear();
     g.MenusIdSubmittedThisFrame.clear();
     g.InputTextState.ClearFreeMemory();
-    g.MultiSelectScopeWindow = NULL;
 
     g.SettingsWindows.clear();
     g.SettingsHandlers.clear();
@@ -8433,6 +8432,7 @@ static void ImGui::NavProcessItem(ImGuiWindow* window, const ImRect& nav_bb, con
             result->ID = id;
             result->FocusScopeId = window->DC.NavFocusScopeIdCurrent;
             result->RectRel = nav_bb_rel;
+            result->HasSelectionData = (g.NextItemData.Flags & ImGuiNextItemDataFlags_HasSelectionData) != 0;
         }
 
         // Features like PageUp/PageDown need to maintain a separate score for the visible set of items.
@@ -8446,6 +8446,7 @@ static void ImGui::NavProcessItem(ImGuiWindow* window, const ImRect& nav_bb, con
                     result->ID = id;
                     result->FocusScopeId = window->DC.NavFocusScopeIdCurrent;
                     result->RectRel = nav_bb_rel;
+                    result->HasSelectionData = (g.NextItemData.Flags & ImGuiNextItemDataFlags_HasSelectionData) != 0;
                 }
     }
 
@@ -8973,6 +8974,7 @@ static void ImGui::NavUpdateMoveResult()
         g.NavJustMovedToId = result->ID;
         g.NavJustMovedToFocusScopeId = result->FocusScopeId;
         g.NavJustMovedToKeyMods = g.NavMoveRequestKeyMods;
+        g.NavJustMovedToHasSelectionData = result->HasSelectionData;
     }
     IMGUI_DEBUG_LOG_NAV("[nav] NavMoveRequest: result NavID 0x%08X in Layer %d Window \"%s\"\n", result->ID, g.NavLayer, g.NavWindow->Name);
     SetNavIDWithRectRel(result->ID, g.NavLayer, result->FocusScopeId, result->RectRel);
