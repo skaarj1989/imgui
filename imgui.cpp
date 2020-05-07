@@ -10620,8 +10620,8 @@ void ImGui::ShowMetricsWindow(bool* p_open)
 #ifdef IMGUI_HAS_TABLE
         if (TreeNode("SettingsTables", "Settings packed data: Tables: %d bytes", g.SettingsTables.size()))
         {
-            //for (ImGuiTableSettings* settings = g.SettingsTables.begin(); settings != NULL; settings = g.SettingsTables.next_chunk(settings))
-            //    DebugNodeTableSettings(settings);
+            for (ImGuiTableSettings* settings = g.SettingsTables.begin(); settings != NULL; settings = g.SettingsTables.next_chunk(settings))
+                DebugNodeTableSettings(settings);
             TreePop();
         }
 #endif // #ifdef IMGUI_HAS_TABLE
@@ -11002,6 +11002,7 @@ void ImGui::DebugNodeDrawCmdShowMeshAndBoundingBox(ImGuiWindow*, const ImDrawLis
 void ImGui::DebugNodeStorage(ImGuiStorage*, const char*) {}
 void ImGui::DebugNodeTabBar(ImGuiTabBar*, const char*) {}
 void ImGui::DebugNodeTable(ImGuiTable*) {}
+void ImGui::DebugNodeTableSettings(ImGuiTableSettings*) {}
 void ImGui::DebugNodeWindow(ImGuiWindow*, const char*) {}
 void ImGui::DebugNodeWindowSettings(ImGuiWindowSettings*) {}
 void ImGui::DebugNodeWindowsList(ImVector<ImGuiWindow*>*, const char*) {}
