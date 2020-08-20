@@ -1181,6 +1181,14 @@ static void ShowDemoWindowWidgets()
                                 ImGui::TreePop();
                         }
 
+                        // Right-click: context menu
+                        if (ImGui::BeginPopupContextItem())
+                        {
+                            ImGui::Text("(Testing Selectable inside an embedded popup)");
+                            ImGui::Selectable("Close");
+                            ImGui::EndPopup();
+                        }
+
                         if (use_columns)
                         {
                             ImGui::NextColumn();
