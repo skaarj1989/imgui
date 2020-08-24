@@ -5913,7 +5913,7 @@ bool ImGui::Selectable(const char* label, bool selected, ImGuiSelectableFlags fl
     const bool span_all_columns = (flags & ImGuiSelectableFlags_SpanAllColumns) != 0;
     if (span_all_columns && window->DC.CurrentColumns) // FIXME-OPT: Avoid if vertically clipped.
         PushColumnsBackground();
-    else if ((flags & ImGuiSelectableFlags_SpanAllColumns) && g.CurrentTable) // FIXME-TABLE: Make it possible to colorize a whole line
+    else if (span_all_columns && g.CurrentTable) // FIXME-TABLE: Make it possible to colorize a whole line
         PushTableBackground();
 
     // Submit label or explicit size to ItemSize(), whereas ItemAdd() will submit a larger/spanning rectangle.
@@ -5966,7 +5966,7 @@ bool ImGui::Selectable(const char* label, bool selected, ImGuiSelectableFlags fl
     {
         if (span_all_columns && window->DC.CurrentColumns)
             PopColumnsBackground();
-        else if ((flags & ImGuiSelectableFlags_SpanAllColumns) && g.CurrentTable)
+        else if (span_all_columns && g.CurrentTable)
             PopTableBackground();
         return false;
     }
@@ -6018,7 +6018,7 @@ bool ImGui::Selectable(const char* label, bool selected, ImGuiSelectableFlags fl
 
     if (span_all_columns && window->DC.CurrentColumns)
         PopColumnsBackground();
-    else if ((flags & ImGuiSelectableFlags_SpanAllColumns) && g.CurrentTable)
+    else if (span_all_columns && g.CurrentTable)
         PopTableBackground();
 
     if (flags & ImGuiSelectableFlags_Disabled) PushStyleColor(ImGuiCol_Text, style.Colors[ImGuiCol_TextDisabled]);
@@ -9853,7 +9853,7 @@ void    ImGui::TableBeginRow(ImGuiTable* table)
     table->CurrentRow++;
     table->CurrentColumn = -1;
     table->RowBgColor[0] = table->RowBgColor[1] = IM_COL32_DISABLE;
-    table->RowCellDataCount = 0;
+    table->RowCellDataCurrent = -1;
     table->IsInsideRow = true;
 
     // Begin frozen rows
@@ -9932,7 +9932,7 @@ void    ImGui::TableEndRow(ImGuiTable* table)
             }
         }
 
-        const bool draw_cell_bg_color = table->RowCellDataCount > 0;
+        const bool draw_cell_bg_color = table->RowCellDataCurrent >= 0;
         const bool draw_strong_bottom_border = unfreeze_rows;// || (table->RowFlags & ImGuiTableRowFlags_Headers);
         if ((bg_col0 | bg_col1 | border_col) != 0 || draw_strong_bottom_border || draw_cell_bg_color)
         {
@@ -9957,7 +9957,7 @@ void    ImGui::TableEndRow(ImGuiTable* table)
         // Draw cell background color
         if (draw_cell_bg_color)
         {
-            ImGuiTableCellData* cell_data_end = &table->RowCellData[table->RowCellDataCount - 1];
+            ImGuiTableCellData* cell_data_end = &table->RowCellData[table->RowCellDataCurrent];
             for (ImGuiTableCellData* cell_data = &table->RowCellData[0]; cell_data <= cell_data_end; cell_data++)
             {
                 ImGuiTableColumn* column = &table->Columns[cell_data->Column];
@@ -10589,7 +10589,9 @@ void ImGui::TableSetBgColor(ImGuiTableBgTarget bg_target, ImU32 color, int colum
             column_n = table->CurrentColumn;
         if ((table->VisibleUnclippedMaskByIndex & ((ImU64)1 << column_n)) == 0)
             return;
-        ImGuiTableCellData* cell_data = &table->RowCellData[table->RowCellDataCount++];
+        if (table->RowCellDataCurrent < 0 || table->RowCellData[table->RowCellDataCurrent].Column != column_n)
+            table->RowCellDataCurrent++;
+        ImGuiTableCellData* cell_data = &table->RowCellData[table->RowCellDataCurrent];
         cell_data->BgColor = color;
         cell_data->Column = (ImS8)column_n;
         break;
