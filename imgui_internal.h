@@ -1632,7 +1632,7 @@ struct IMGUI_API ImGuiWindowTempData
     ImVector<ImGuiWindow*>  ChildWindows;
     ImGuiStorage*           StateStorage;           // Current persistent per-window storage (store e.g. tree node open/close state)
     ImGuiColumns*           CurrentColumns;         // Current columns set
-    ImGuiTable*             CurrentTable;           // Current table set
+    int                     CurrentTableIdx;        // Current table index (into g.Tables)
     ImGuiLayoutType         LayoutType;
     ImGuiLayoutType         ParentLayoutType;       // Layout type of parent window at the time of Begin()
     int                     FocusCounterRegular;    // (Legacy Focus/Tabbing system) Sequential counter, start at -1 and increase as assigned via FocusableItemRegister() (FIXME-NAV: Needs redesign)
@@ -1674,7 +1674,7 @@ struct IMGUI_API ImGuiWindowTempData
         TreeJumpToParentOnPopMask = 0x00;
         StateStorage = NULL;
         CurrentColumns = NULL;
-        CurrentTable = NULL;
+        CurrentTableIdx = -1;
         LayoutType = ParentLayoutType = ImGuiLayoutType_Vertical;
         FocusCounterRegular = FocusCounterTabStop = -1;
 
