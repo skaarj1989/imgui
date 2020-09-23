@@ -3792,7 +3792,7 @@ static void ShowDemoWindowTables()
             flags &= ~(ImGuiTableFlags_SizingPolicyMaskX_ ^ ImGuiTableFlags_SizingPolicyFixedX);    // Can't specify both sizing polices so we clear the other
         ImGui::SameLine(); HelpMarker("Default if _ScrollX if enabled. Makes columns use _WidthFixed by default, or _WidthAlwaysAutoResize if _Resizable is not set.");
         ImGui::CheckboxFlags("ImGuiTableFlags_Resizable", (unsigned int*)&flags, ImGuiTableFlags_Resizable);
-        ImGui::CheckboxFlags("ImGuiTableFlags_NoClipX", (unsigned int*)&flags, ImGuiTableFlags_NoClipX);
+        ImGui::CheckboxFlags("ImGuiTableFlags_NoClip", (unsigned int*)&flags, ImGuiTableFlags_NoClip);
 
         if (ImGui::BeginTable("##3ways", 3, flags, ImVec2(0, 100)))
         {
@@ -4260,7 +4260,6 @@ static void ShowDemoWindowTables()
 
             ImGui::BulletText("Padding, Sizing:");
             ImGui::Indent();
-            ImGui::CheckboxFlags("ImGuiTableFlags_NoClipX", (unsigned int*)&flags, ImGuiTableFlags_NoClipX);
             if (ImGui::CheckboxFlags("ImGuiTableFlags_SizingPolicyStretchX", (unsigned int*)&flags, ImGuiTableFlags_SizingPolicyStretchX))
                 flags &= ~(ImGuiTableFlags_SizingPolicyMaskX_ ^ ImGuiTableFlags_SizingPolicyStretchX);  // Can't specify both sizing polices so we clear the other
             ImGui::SameLine(); HelpMarker("[Default if ScrollX is off]\nFit all columns within available width (or specified inner_width). Fixed and Stretch columns allowed.");
@@ -4271,6 +4270,8 @@ static void ShowDemoWindowTables()
             ImGui::CheckboxFlags("ImGuiTableFlags_NoHostExtendY", (unsigned int*)&flags, ImGuiTableFlags_NoHostExtendY);
             ImGui::CheckboxFlags("ImGuiTableFlags_NoKeepColumnsVisible", (unsigned int*)&flags, ImGuiTableFlags_NoKeepColumnsVisible);
             ImGui::SameLine(); HelpMarker("Only available if ScrollX is disabled.");
+            ImGui::CheckboxFlags("ImGuiTableFlags_NoClip", (unsigned int*)&flags, ImGuiTableFlags_NoClip);
+            ImGui::SameLine(); HelpMarker("Disable clipping rectangle for every individual columns (reduce draw command count, items will be able to overflow into other columns). Generally incompatible with ScrollFreeze options.");
             ImGui::Unindent();
 
             ImGui::BulletText("Scrolling:");
@@ -4388,7 +4389,7 @@ static void ShowDemoWindowTables()
                 for (int row_n = clipper.DisplayStart; row_n < clipper.DisplayEnd; row_n++)
 #else
             {
-                for (int row_n = 0; row_n < items_count; n++)
+                for (int row_n = 0; row_n < items_count; row_n++)
 #endif
                 {
                     MyItem* item = &items[row_n];
