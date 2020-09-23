@@ -10528,7 +10528,7 @@ void ImGui::TableSortSpecsClickColumn(ImGuiTable* table, ImGuiTableColumn* click
 // You can sort your data again when 'SpecsChanged == true'. It will be true with sorting specs have changed since
 // last call, or the first time.
 // Lifetime: don't hold on this pointer over multiple frames or past any subsequent call to BeginTable()!
-const ImGuiTableSortSpecs* ImGui::TableGetSortSpecs()
+ImGuiTableSortSpecs* ImGui::TableGetSortSpecs()
 {
     ImGuiContext& g = *GImGui;
     ImGuiTable* table = g.CurrentTable;
@@ -10540,8 +10540,6 @@ const ImGuiTableSortSpecs* ImGui::TableGetSortSpecs()
     if (table->IsSortSpecsDirty)
         TableSortSpecsBuild(table);
 
-    table->SortSpecs.SpecsChanged = table->IsSortSpecsChangedForUser;
-    table->IsSortSpecsChangedForUser = false;
     return table->SortSpecs.SpecsCount ? &table->SortSpecs : NULL;
 }
 
@@ -10696,9 +10694,8 @@ void ImGui::TableSortSpecsBuild(ImGuiTable* table)
     }
     table->SortSpecs.Specs = table->SortSpecsData.Data;
     table->SortSpecs.SpecsCount = table->SortSpecsData.Size;
-
-    table->IsSortSpecsDirty = false;
-    table->IsSortSpecsChangedForUser = true;
+    table->SortSpecs.SpecsDirty = true; // Mark as dirty for user
+    table->IsSortSpecsDirty = false; // Mark as not dirty for us
 }
 
 //-------------------------------------------------------------------------
