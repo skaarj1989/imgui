@@ -4179,6 +4179,12 @@ static void AddDrawListToDrawData(ImVector<ImDrawList*>* out_list, ImDrawList* d
     if (sizeof(ImDrawIdx) == 2)
         IM_ASSERT(draw_list->_VtxCurrentIdx < (1 << 16) && "Too many vertices in ImDrawList using 16-bit indices. Read comment above");
 
+    // Merge small draw commands when possible
+    ImGuiContext& g = *GImGui;
+    //g.MergeSmallDrawCmdsMaxElem = g.IO.KeyShift ? 120 : 0; // [DEBUG]
+    if (g.FrameCountRendered < g.FrameCount && g.MergeSmallDrawCmdsMaxElem > 0)
+        ImDrawListMergeSmallDrawCmds(draw_list, g.MergeSmallDrawCmdsMaxElem);
+
     out_list->push_back(draw_list);
 }
 
@@ -4348,7 +4354,7 @@ void ImGui::Render()
 
     if (g.FrameCountEnded != g.FrameCount)
         EndFrame();
-    g.FrameCountRendered = g.FrameCount;
+
     g.IO.MetricsRenderWindows = 0;
     g.DrawDataBuilder.Clear();
 
@@ -4386,6 +4392,7 @@ void ImGui::Render()
     g.IO.MetricsRenderVertices = g.DrawData.TotalVtxCount;
     g.IO.MetricsRenderIndices = g.DrawData.TotalIdxCount;
 
+    g.FrameCountRendered = g.FrameCount;
     CallContextHooks(&g, ImGuiContextHookType_RenderPost);
 }
 
