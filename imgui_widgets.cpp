@@ -8518,7 +8518,7 @@ bool    ImGui::BeginTableEx(const char* name, ImGuiID id, int columns_count, ImG
     table->HostBackupParentWorkRect = inner_window->ParentWorkRect;
     table->HostBackupColumnsOffset = outer_window->DC.ColumnsOffset;
     table->HostCursorMaxPos = inner_window->DC.CursorMaxPos;
-    inner_window->ParentWorkRect = inner_window->WorkRect;
+    inner_window->ParentWorkRect = table->WorkRect;
 
     // Padding and Spacing
     // - None               ........Content..... Pad .....Content........
