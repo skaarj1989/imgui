@@ -42,6 +42,8 @@ enum ImGuizmoCol_ {
   ImGuizmoCol_PlaneZX,
   ImGuizmoCol_PlaneXY,
 
+  ImGuizmoCol_BoundAnchor,
+
   ImGuizmoCol_COUNT
 };
 using ImGuizmoCol = int;
@@ -119,25 +121,25 @@ IMGUI_API void SetViewport(float x, float y, float width, float height);
 IMGUI_API void SetDrawlist(ImDrawList *draw_list = nullptr);
 
 /**
+ * @param [in] view_matrix Camera view matrix (column-major)
+ * @param [in] projection_matrix Camera projection matrix (column-major)
+ */
+IMGUI_API void SetCamera(const float *view_matrix,
+                         const float *projection_matrix, bool is_ortho);
+
+/**
  * @note Convenience method
  * @param [in] snap shared between all operations
  * @return same as End()
  */
 IMGUI_API bool Manipulate(ImGuizmoMode mode, ImGuizmoOperation operation,
-                          float *model, const float *snap = nullptr);
-
-/**
- * @param [in] view Camera view matrix (column-major)
- * @param [in] projection Camera projection matrix (column-major)
- */
-IMGUI_API void SetCamera(const float *view, const float *projection,
-                         bool is_ortho);
+                          float *model_matrix, const float *snap = nullptr);
 
 /** 
- * @param [in] model Model matrix (column-major)
+ * @param [in] model_matrix Model matrix (column-major)
  * @return true if gizmo is visible
  */
-IMGUI_API bool Begin(ImGuizmoMode mode, float *model,
+IMGUI_API bool Begin(ImGuizmoMode mode, float *model_matrix,
                      ImGuizmoAxisFlags locked_axes = ImGuizmoAxisFlags_None);
 /**
  * Saves result to locked model matrix if manipulation has been made between
@@ -162,13 +164,13 @@ IMGUI_API void BoundsScale(const float *bounds, const float *snap = nullptr);
  * patent in the US. I don't think it will bring troubles using it as other
  * software are using the same mechanics. But just in case, you are now warned!
  *
- * @param [in] view Camera view, column-major matrix
+ * @param [in] view_matrix Camera view, column-major matrix
  */
-IMGUI_API void ViewManipulate(float *view, const float length,
+IMGUI_API void ViewManipulate(float *view_matrix, const float length,
                               const ImVec2 &position, const ImVec2 &size,
                               ImU32 background_color = 0x10101010);
 
-IMGUI_API void ViewManipulate(float *view, const float length,
+IMGUI_API void ViewManipulate(float *view_matrix, const float length,
                               ImU32 background_color = 0x10101010);
 
 //
